@@ -1,13 +1,37 @@
 "use client";
-import Chatcontainer from "@/components/Chatcontainer";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
-import { useState } from "react";
+import { div } from "framer-motion/client";
+import { KeyboardEvent, useRef, useState } from "react";
+
+interface Message {
+  user: string;
+  text: string;
+  align: "left" | "right";
+}
 
 const Home = () => {
-  
-  const onSubmit = () => {};
-  const handleChange = () => {};
+  const [chating, setChating] = useState(false);
+  const [messages, setMessages] = useState<Message[]>();
+  const [input, setInput] = useState("");
+  const [user, setUser] = useState<"You" | "AI">("You");
+
+  const onSubmit = () => {
+    setChating(true);
+    if (input.trim()) {
+      setMessages([
+        ...(messages ?? []),
+        { user: user, text: input, align: "right" },
+      ]);
+      setInput("");
+    }
+  };
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onSubmit();
+    }
+  };
   const placeholders = [
     "What's the first rule of Fight Club?",
     "Who is Tyler Durden?",
@@ -17,19 +41,63 @@ const Home = () => {
   ];
   return (
     <BackgroundBeamsWithCollision>
-      <div className="flex flex-col gap-10 w-full justify-center items-center">
-        <h2 className="text-2xl relative z-20 md:text-4xl lg:text-7xl font-bold text-center text-[#EEEEEE]  tracking-tight">
-          Welcome to AI Study Buddy
-        </h2>
-    <Chatcontainer/>
-        <div className="w-full max-w-lg">
-          <PlaceholdersAndVanishInput
-            placeholders={placeholders}
-            onChange={handleChange}
-            onSubmit={onSubmit}
-          />
+      {chating ? (
+        <div className="flex flex-col gap-10 w-full h-screen justify-center">
+          <div className="flex flex-col h-screen  text-gray-800 dark:text-gray-100">
+            <div className="flex-1 container overflow-y-auto scrollbar-hide p-4 space-y-4">
+              {messages?.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`flex ${
+                    msg.align === "right" ? "justify-end" : ""
+                  }`}
+                >
+                  <div
+                    className={`relative p-4 rounded-lg shadow-md text-lg ${
+                      msg.align === "right"
+                        ? "bg-gradient-to-br  from-neutral-600 via-neutral-700  border-2 border-gray-800 to-neutral-800 text-white"
+                        : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                    } max-w-sm`}
+                  >
+                    <p>{msg.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="w-full bg-gray-100 dark:bg-gray-800 border-t p-4 flex items-center space-x-2 sticky bottom-0 justify-center">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                className="w-full max-w-5xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full p-3 text-gray-700 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <button
+                onClick={onSubmit}
+                className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-md hover:shadow-lg transform transition-transform duration-200 ease-in-out hover:scale-105"
+              >
+                Send
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col gap-10 h-screen w-full justify-center items-center">
+           <h1 className="relative z-10 text-lg md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-400  text-center font-sans font-bold">
+          Welcome to AI Study Buddy 
+        </h1>
+          <div className="w-full max-w-lg">
+            <PlaceholdersAndVanishInput
+              placeholders={placeholders}
+              onChange={(e) => setInput(e.target.value)}
+              onSubmit={onSubmit}
+            />
+          </div>
+        </div>
+      )}
+      
     </BackgroundBeamsWithCollision>
   );
 };
