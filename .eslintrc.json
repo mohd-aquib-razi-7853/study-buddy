@@ -1,3 +1,14 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended" // Add this if using TypeScript
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off", // Next.js handles React in scope automatically
+    "no-unused-vars": "warn", // Warns on unused variables
+    "@typescript-eslint/no-unused-vars": "warn", // Use this for TypeScript
+    "prefer-const": "error" // Enforce const for variables that aren’t reassigned
+  }
 }
