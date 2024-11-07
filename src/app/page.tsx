@@ -42,9 +42,9 @@ const Home = () => {
   return (
     <BackgroundBeamsWithCollision>
       {chating ? (
-        <div className="flex flex-col gap-10 w-full h-screen justify-center">
+        <div className="flex flex-col gap-10 w-full h-screen  justify-center">
           <div className="flex flex-col h-screen  text-gray-800 dark:text-gray-100">
-            <div className="flex-1 container overflow-y-auto scrollbar-hide p-4 space-y-4">
+            <div className="flex-1 container overflow-y-auto scrollbar-hide p-4 space-y-4 h-full">
               {messages?.map((msg, idx) => (
                 <div
                   key={idx}
@@ -69,7 +69,7 @@ const Home = () => {
               <input
                 type="text"
                 placeholder="Type a message..."
-                className="w-full max-w-5xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full p-3 text-gray-700 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full max-w-5xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-3 text-gray-700 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 text-lg "
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
