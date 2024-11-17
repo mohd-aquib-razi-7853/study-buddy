@@ -1,8 +1,10 @@
 "use client";
+import { ModeToggle } from "@/components/ThemeToggle";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
+import { Skeleton } from "@/components/ui/skeleton";
 import generate_text from "@/lib/ai";
-import { KeyboardEvent, useState, useRef,} from "react";
+import { KeyboardEvent, useState, useRef } from "react";
 
 interface Message {
   user: string;
@@ -19,9 +21,6 @@ const Home = () => {
   const [user, setUser] = useState<"You" | "AI">("You");
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
-
-  
-  
 
   const onSubmit = () => {
     setChating(true);
@@ -44,7 +43,11 @@ const Home = () => {
       } catch (error) {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { user: "AI", text: "Something went wrong. Please try again.", align: "left" },
+          {
+            user: "AI",
+            text: "Something went wrong. Please try again.",
+            align: "left",
+          },
         ]);
       } finally {
         setIsTyping(false);
@@ -69,7 +72,7 @@ const Home = () => {
   return (
     <BackgroundBeamsWithCollision>
       {chating ? (
-        <div className="flex flex-col w-full h-screen">
+        <div className="flex flex-col w-full h-screen scroll-smooth">
           {/* Chat Messages */}
           <div className="flex-1 container overflow-y-auto scrollbar-hide px-4 py-6 space-y-4 h-[calc(100vh-100px)] max-w-screen-lg mx-auto">
             {messages.map((msg, idx) => (
@@ -86,22 +89,22 @@ const Home = () => {
                       : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
                   } max-w-xs sm:max-w-md lg:max-w-2xl`}
                 >
-                  <p>{msg.text}</p>
+                  <p className="whitespace-pre-wrap leading-relaxed">
+                    {msg.text}
+                  </p>
                 </div>
               </div>
             ))}
             {isTyping && (
-              <div className="flex justify-start">
-                <div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-sm">
-                  <span>Typing...</span>
-                </div>
+              <div className="flex flex-col space-y-3">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
               </div>
             )}
-            <div ref={chatEndRef}></div>
           </div>
 
           {/* Input Field */}
-          <div className="w-full bg-gray-100 dark:bg-gray-800 border-t p-4 flex items-center space-x-2 sticky bottom-0">
+          <div className="w-full bg-gray-100 dark:bg-gray-800 border-t p-4 flex items-center justify-center space-x-2 sticky bottom-0">
             <input
               type="text"
               placeholder="Type a message..."
@@ -121,9 +124,15 @@ const Home = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-10 h-screen w-full justify-center items-center px-4">
-          <h1 className="relative z-10 text-3xl md:text-7xl text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-400 font-sans font-bold">
+          <div className="absolute right-4 top-2">
+            <ModeToggle />
+          </div>
+          <h1
+            className="relative z-10 text-3xl md:text-7xl text-center bg-clip-text text-transparent   bg-gradient-to-b from-gray-800 via-gray-700 to-gray-600 dark:from-gray-100 dark:via-gray-200 dark:to-gray-400 font-sans font-bold"
+          >
             Welcome to AI Study Buddy
           </h1>
+
           <div className="w-full max-w-lg">
             <PlaceholdersAndVanishInput
               placeholders={placeholders}
