@@ -1,14 +1,7 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended" // Add this if using TypeScript
-  ],
+  "extends": "next",
   "rules": {
-    "react/react-in-jsx-scope": "off", // Next.js handles React in scope automatically
-    "no-unused-vars": "warn", // Warns on unused variables
-    "@typescript-eslint/no-unused-vars": "warn", // Use this for TypeScript
-    "prefer-const": "error" // Enforce const for variables that aren’t reassigned
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-page-custom-font": "off"
   }
 }
