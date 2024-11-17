@@ -2,7 +2,7 @@
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import generate_text from "@/lib/ai";
-import { KeyboardEvent,  useState } from "react";
+import { KeyboardEvent, useState, useRef,} from "react";
 
 interface Message {
   user: string;
@@ -13,95 +13,115 @@ interface Message {
 const Home = () => {
   const [chating, setChating] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { user: "ai", text: "Hi there, what can i do for you", align: "left" },
+    { user: "ai", text: "Hi there, what can I do for you?", align: "left" },
   ]);
   const [input, setInput] = useState("");
   const [user, setUser] = useState<"You" | "AI">("You");
   const [isTyping, setIsTyping] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  
+  
 
   const onSubmit = () => {
     setChating(true);
     setIsTyping(true);
     if (input.trim()) {
-      setMessages([
-        ...(messages ?? []),
+      setMessages((prevMessages) => [
+        ...prevMessages,
         { user: user, text: input, align: "right" },
       ]);
       setInput("");
     }
     setTimeout(async () => {
       setUser("AI");
-      const result = await generate_text(input);
-
-      setMessages([...messages, { user: user, text: result, align: "left" }]);
-      setIsTyping(false);
+      try {
+        const result = await generate_text(input);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { user: "AI", text: result, align: "left" },
+        ]);
+      } catch (error) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { user: "AI", text: "Something went wrong. Please try again.", align: "left" },
+        ]);
+      } finally {
+        setIsTyping(false);
+      }
     }, 1500);
   };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       onSubmit();
     }
   };
+
   const placeholders = [
     "What's the first rule of Fight Club?",
     "Who is Tyler Durden?",
-    "Where is Andrew Laeddis Hiding?",
-    "Write a Javascript method to reverse a string",
+    "Where is Andrew Laeddis hiding?",
+    "Write a JavaScript method to reverse a string",
     "How to assemble your own PC?",
   ];
+
   return (
     <BackgroundBeamsWithCollision>
       {chating ? (
-        <div className="flex flex-col gap-10 w-full h-screen  justify-center">
-          <div className="flex flex-col h-screen  text-gray-800 dark:text-gray-100">
-            <div className="flex-1 container overflow-y-auto scrollbar-hide p-4 space-y-4 h-full">
-              {messages?.map((msg, idx) => (
+        <div className="flex flex-col w-full h-screen">
+          {/* Chat Messages */}
+          <div className="flex-1 container overflow-y-auto scrollbar-hide px-4 py-6 space-y-4 h-[calc(100vh-100px)] max-w-screen-lg mx-auto">
+            {messages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`flex ${
+                  msg.align === "right" ? "justify-end" : "justify-start"
+                }`}
+              >
                 <div
-                  key={idx}
-                  className={`flex ${
-                    msg.align === "right" ? "justify-end" : ""
-                  }`}
+                  className={`relative p-4 rounded-lg shadow-md text-lg ${
+                    msg.align === "right"
+                      ? "bg-gradient-to-br from-neutral-600 via-neutral-700 border-2 border-gray-800 to-neutral-800 text-white"
+                      : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                  } max-w-xs sm:max-w-md lg:max-w-2xl`}
                 >
-                  {isTyping && (
-                    <div className="flex justify-start">
-                      <div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-sm">
-                        <span>Typing...</span>
-                      </div>
-                    </div>
-                  )}
-                  <div
-                    className={`relative p-4 rounded-lg shadow-md text-lg ${
-                      msg.align === "right"
-                        ? "bg-gradient-to-br  from-neutral-600 via-neutral-700  border-2 border-gray-800 to-neutral-800 text-white"
-                        : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
-                    } max-w-2xl`}
-                  >
-                    <p>{msg.text}</p>
-                  </div>
+                  <p>{msg.text}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-sm">
+                  <span>Typing...</span>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef}></div>
           </div>
-          <div className="w-full bg-gray-100 dark:bg-gray-800 border-t p-4 flex items-center space-x-2 sticky bottom-0 justify-center">
+
+          {/* Input Field */}
+          <div className="w-full bg-gray-100 dark:bg-gray-800 border-t p-4 flex items-center space-x-2 sticky bottom-0">
             <input
               type="text"
               placeholder="Type a message..."
-              className="w-full max-w-5xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-3 text-gray-700 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 text-lg "
+              className="w-full max-w-4xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-3 text-gray-700 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-lg"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
+              disabled={isTyping}
             />
             <button
               onClick={onSubmit}
-              className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-md hover:shadow-lg transform transition-transform duration-200 ease-in-out hover:scale-105"
+              className="bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-full shadow-md hover:shadow-lg transform transition-transform duration-200 ease-in-out hover:scale-105 text-sm sm:text-base"
             >
               Send
             </button>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-10 h-screen w-full justify-center items-center">
-          <h1 className="relative z-10 text-lg md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-400  text-center font-sans font-bold">
+        <div className="flex flex-col gap-10 h-screen w-full justify-center items-center px-4">
+          <h1 className="relative z-10 text-3xl md:text-7xl text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-400 font-sans font-bold">
             Welcome to AI Study Buddy
           </h1>
           <div className="w-full max-w-lg">
@@ -116,4 +136,5 @@ const Home = () => {
     </BackgroundBeamsWithCollision>
   );
 };
+
 export default Home;
