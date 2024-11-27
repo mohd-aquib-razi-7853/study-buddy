@@ -9,4 +9,4 @@ const generate_text = async (prompt: string) => {
   return result.response.text();
 };
 
-export default generate_text;
+export default generate_text

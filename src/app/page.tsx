@@ -5,7 +5,9 @@ import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-van
 import { Skeleton } from "@/components/ui/skeleton";
 import generate_text from "@/lib/ai";
 import { KeyboardEvent, useState, useRef } from "react";
-
+import {marked} from "marked"
+import { markedDownToPlain } from "@/lib/utils";
+import MarkedDwn from "@/components/MarkedDwn";
 interface Message {
   user: string;
   text: string;
@@ -15,7 +17,7 @@ interface Message {
 const Home = () => {
   const [chating, setChating] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { user: "ai", text: "Hi there, what can I do for you?", align: "left" },
+    
   ]);
   const [input, setInput] = useState("");
   const [user, setUser] = useState<"You" | "AI">("You");
@@ -36,9 +38,10 @@ const Home = () => {
       setUser("AI");
       try {
         const result = await generate_text(input);
+        const re = markedDownToPlain(result)
         setMessages((prevMessages) => [
           ...prevMessages,
-          { user: "AI", text: result, align: "left" },
+          { user: "AI", text: re, align: "left" },
         ]);
       } catch (error) {
         setMessages((prevMessages) => [
