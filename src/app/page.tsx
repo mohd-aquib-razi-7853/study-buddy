@@ -5,8 +5,9 @@ import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-van
 import { Skeleton } from "@/components/ui/skeleton";
 import generate_text from "@/lib/ai";
 import { KeyboardEvent, useState, useRef } from "react";
-import {marked} from "marked"
+import { marked } from "marked";
 import { markedDownToPlain } from "@/lib/utils";
+import ResponseRenderer from "@/components/CodeBlock";
 interface Message {
   user: string;
   text: string;
@@ -15,9 +16,7 @@ interface Message {
 
 const Home = () => {
   const [chating, setChating] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [user, setUser] = useState<"You" | "AI">("You");
   const [isTyping, setIsTyping] = useState(false);
@@ -37,10 +36,10 @@ const Home = () => {
       setUser("AI");
       try {
         const result = await generate_text(input);
-        const re = markedDownToPlain(result)
+        const re = markedDownToPlain(result);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { user: "AI", text: re, align: "left" },
+          { user: "AI", text: result, align: "left" },
         ]);
       } catch (error) {
         setMessages((prevMessages) => [
@@ -92,7 +91,7 @@ const Home = () => {
                   } max-w-xs sm:max-w-md lg:max-w-2xl`}
                 >
                   <p className="whitespace-pre-wrap leading-relaxed">
-                    {msg.text}
+                    <ResponseRenderer response={msg.text} />
                   </p>
                 </div>
               </div>
@@ -129,9 +128,7 @@ const Home = () => {
           <div className="absolute right-4 top-2">
             <ModeToggle />
           </div>
-          <h1
-            className="relative z-10 text-3xl md:text-7xl text-center bg-clip-text text-transparent   bg-gradient-to-b from-gray-800 via-gray-700 to-gray-600 dark:from-gray-100 dark:via-gray-200 dark:to-gray-400 font-sans font-bold"
-          >
+          <h1 className="relative z-10 text-3xl md:text-7xl text-center bg-clip-text text-transparent   bg-gradient-to-b from-gray-800 via-gray-700 to-gray-600 dark:from-gray-100 dark:via-gray-200 dark:to-gray-400 font-sans font-bold">
             Welcome to AI Study Buddy
           </h1>
 
