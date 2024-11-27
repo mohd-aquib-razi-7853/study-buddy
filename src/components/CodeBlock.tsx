@@ -1,3 +1,4 @@
+import { markedDownToPlain } from "@/lib/utils";
 import React from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/cjs/styles/hljs";
@@ -48,7 +49,7 @@ const ResponseRenderer: React.FC<ResponseRenderProps> = ({ response }) => {
     <div>
       {parts.map((parts, index) =>
         parts.type === "text" ? (
-          <p key={index}>{parts.content}</p>
+          <p key={index} className="whitespace-pre-wrap leading-relaxed">{markedDownToPlain(parts.content)}</p>
         ) : (
           <CodeBlock
             key={index}
