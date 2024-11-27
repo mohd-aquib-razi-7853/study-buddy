@@ -7,7 +7,6 @@ import generate_text from "@/lib/ai";
 import { KeyboardEvent, useState, useRef } from "react";
 import {marked} from "marked"
 import { markedDownToPlain } from "@/lib/utils";
-import MarkedDwn from "@/components/MarkedDwn";
 interface Message {
   user: string;
   text: string;
