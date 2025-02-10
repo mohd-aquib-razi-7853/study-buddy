@@ -46,7 +46,7 @@ const Home = () => {
           ...prevMessages,
           {
             user: "AI",
-            text: "Something went wrong. Please try again.",
+            text: `${error}`,
             align: "left",
           },
         ]);
