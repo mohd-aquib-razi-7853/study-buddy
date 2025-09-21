@@ -1,7 +1,7 @@
 import { markedDownToPlain } from "@/lib/utils";
 import React from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
-import { darcula } from "react-syntax-highlighter/dist/cjs/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 type CodeBLockProps = {
   code: string;
@@ -15,7 +15,7 @@ const CodeBlock: React.FC<CodeBLockProps> = ({
   return (
     <div className="w-full h-full rounded-xl"> 
       <h1 className="text-base font-medium text-gray-500 bg-gray-950 text-left p-2 w-full">{language}</h1>
-    <SyntaxHighlighter language={language} style={darcula}>
+    <SyntaxHighlighter language={language} style={a11yDark}>
       
       {code}
     </SyntaxHighlighter>

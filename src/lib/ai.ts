@@ -10,9 +10,13 @@ const generate_text = async (prompt: string) => {
        const response = await ai.models.generateContent({
          model: "gemini-2.5-flash",
          contents: prompt,
+         config:{
+          thinkingConfig:{
+            thinkingBudget:0,
+          }
+         }
        });
        if (!response) throw new Error("No data get");
-       console.log(response.text)
        return response.text;
   } catch (error) {
     console.error("Error on AI", error)
