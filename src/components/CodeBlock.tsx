@@ -24,7 +24,7 @@ const CodeBlock: React.FC<CodeBLockProps> = ({
 };
 
 type ResponseRenderProps = {
-  response: string;
+  response: string ;
 };
 const ResponseRenderer: React.FC<ResponseRenderProps> = ({ response }) => {
   const codeReg = /```(.*?)\n([\s\S]*?)```/g;

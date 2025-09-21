@@ -10,7 +10,7 @@ import { markedDownToPlain } from "@/lib/utils";
 import ResponseRenderer from "@/components/CodeBlock";
 interface Message {
   user: string;
-  text: string;
+  text?: string;
   align: "left" | "right";
 }
 
@@ -36,6 +36,9 @@ const Home = () => {
       setUser("AI");
       try {
         const result = await generate_text(input);
+        if(!result){
+          return new Error("No data get")
+        }
         const re = markedDownToPlain(result);
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -91,7 +94,7 @@ const Home = () => {
                   } max-w-xs sm:max-w-md lg:max-w-2xl`}
                 >
                   <p className="whitespace-pre-wrap leading-relaxed">
-                    <ResponseRenderer response={msg.text} />
+                    <ResponseRenderer response={msg.text || "No response get"} />
                   </p>
                 </div>
               </div>
