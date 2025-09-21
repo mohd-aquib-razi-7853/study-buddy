@@ -1,12 +1,22 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-const API_KEY = process.env.API_KEY
-const genAI = new GoogleGenerativeAI("AIzaSyB7YhQlkiIF6rlcLGFykiUgtBjWSnt-uOE");
-const model = genAI.getGenerativeModel({ model:  "gemini-2.0-flash" });
+"use server"
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 const generate_text = async (prompt: string) => {
-  const result = await model.generateContent(prompt);
-  console.log(result.response.text());
-  return result.response.text();
+  try {
+       const response = await ai.models.generateContent({
+         model: "gemini-2.5-flash",
+         contents: prompt,
+       });
+       if (!response) throw new Error("No data get");
+       console.log(response.text)
+       return response.text;
+  } catch (error) {
+    console.error("Error on AI", error)
+  }   
 };
 
 export default generate_text
